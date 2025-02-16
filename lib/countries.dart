@@ -26,7 +26,6 @@ class _CountriesState extends State<Countries> {
   List<CountriesModel> allCountries = [];
   List<CountriesModel> filteredCountries = [];
 
-  // Filter options
   String selectedContinent = 'All';
   String selectedTimezone = 'All';
 
@@ -64,8 +63,8 @@ class _CountriesState extends State<Countries> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Filter by Continent',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  'Continent',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
                 DropdownButton<String>(
                   isExpanded: true,
@@ -91,8 +90,8 @@ class _CountriesState extends State<Countries> {
                 ),
                 SizedBox(height: 20),
                 Text(
-                  'Filter by Timezone',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  'Timezone',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
                 DropdownButton<String>(
                   isExpanded: true,
@@ -127,21 +126,21 @@ class _CountriesState extends State<Countries> {
                           selectedTimezone = 'All';
                         });
                       },
-                      child: Text('Reset Filters'),
+                      child: Text('Reset'),
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFFF6C00),
-                        foregroundColor: Colors.white,
-                      ),
+                          backgroundColor: Color(0xFFFF6C00),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10))),
                       onPressed: () {
-                        Navigator.pop(context); // Close the modal
+                        Navigator.pop(context);
                         setState(() {
-                          // Apply filters in the main state
                           _filterCountries();
                         });
                       },
-                      child: Text('Apply Filters'),
+                      child: Text('Show result'),
                     ),
                   ],
                 ),
@@ -211,7 +210,7 @@ class _CountriesState extends State<Countries> {
               onChanged: handleSearch,
               decoration: InputDecoration(
                 labelText: 'Search by country name...',
-                border: OutlineInputBorder(),
+                border: InputBorder.none,
                 prefixIcon: Icon(Icons.search),
                 fillColor: isDarkMode ? Color(0xFF2C2C2C) : Color(0xFFF2F4F7),
                 filled: true,
@@ -280,7 +279,7 @@ class _CountriesState extends State<Countries> {
             child: allCountries.isEmpty
                 ? Center(child: CircularProgressIndicator())
                 : filteredCountries.isEmpty
-                    ? Center(child: Text('No countries match your filters'))
+                    ? Center(child: Text('No country match your filters'))
                     : CountriesList(countries: filteredCountries),
           ),
         ],

@@ -1,112 +1,75 @@
 import 'package:country_info/model/countries_model.dart';
+import 'package:country_info/widgets/image_carousel.dart';
 import 'package:flutter/material.dart';
 
 class CountryDetail extends StatelessWidget {
-  const CountryDetail({super.key, required this.country});
+  CountryDetail({super.key, required this.country})
+      : images = [country.flagUrl, country.coatOfArm];
 
   final CountriesModel country;
+  final List<String> images;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
           country.commonName,
-          textAlign: TextAlign.center,
+          textAlign: TextAlign.start,
         ),
       ),
-      body: SingleChildScrollView(
-        // list
+      body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRect(
-              child: Center(
-                child: Image.network(
-                  country.flagUrl,
-                  width: 280,
-                  height: 200,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: 60,
-                      height: 40,
-                      color: Colors.grey[300],
-                      child: Icon(Icons.flag),
-                    );
-                  },
+            SizedBox(
+              height: 200,
+              child: ImageCarousel(images: images),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(padding: EdgeInsets.all(1)),
+                    _countryInfoSection('Capital', country.capital),
+                    _countryInfoSection('Continent', country.continents),
+                    _countryInfoSection(
+                        'Population', country.population.toString()),
+                    _countryInfoSection('Subregion', country.subregion),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(padding: EdgeInsets.all(1)),
+                        _countryInfoSection(
+                            'Independence', country.independent),
+                        _countryInfoSection('Area', country.area.toString()),
+                        _countryInfoSection('Currency', country.currencyName),
+                        _countryInfoSection('Language', country.firstLanguage),
+                        _countryInfoSection('Timezone', country.timezones),
+                      ],
+                    )
+                  ],
                 ),
               ),
             ),
-            SizedBox(
-              height: 16,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Population: ${country.population.toString()}',
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueGrey),
-                  ),
-                  Text('Religion:${country.region}',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueGrey)),
-                  Text('Capital: ${country.capital}',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueGrey)),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Continent: ${country.continents}',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueGrey)),
-                  Text('Area:${country.area}',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueGrey)),
-                  Text('Timezone: ${country.timezones.toString()}',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueGrey)),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Currency: ${country.currencyName}',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueGrey)),
-                  Text('Language:${country.firstLanguage}',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueGrey)),
-                ],
-              ),
-            )
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _countryInfoSection(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Text(
+        '$label: $value',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
