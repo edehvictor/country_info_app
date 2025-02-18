@@ -9,17 +9,39 @@ class CountriesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: ListView.builder(
-        scrollDirection: Axis.vertical,
-        itemCount: countries.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: CountriesItem(country: countries[index]),
-          );
-        },
-      ),
+    Map<String, List<CountriesModel>> groupedCountries = {};
+
+    for (var country in countries) {
+      String firstLetter = country.commonName[0]
+          .toUpperCase(); //we're searching for the first intial letter
+      if (!groupedCountries.containsKey(firstLetter)) {
+        // if groupCountries does not have the key of the first letter we initalize it by adding an array to it and the then the country that belongs to that first letter
+        groupedCountries[firstLetter] = [];
+      }
+      groupedCountries[firstLetter]!.add(country);
+    }
+
+    return ListView(
+      children: groupedCountries.entries.map((entry) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              child: Text(
+                entry.key,
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Column(
+              children: entry.value.map((country) {
+                return CountriesItem(country: country);
+              }).toList(),
+            ),
+          ],
+        );
+      }).toList(),
     );
   }
 }

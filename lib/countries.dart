@@ -1,6 +1,9 @@
 import 'package:country_info/data/fetch_countries.dart';
 import 'package:country_info/model/countries_model.dart';
+import 'package:country_info/widgets/active_filters.dart';
 import 'package:country_info/widgets/countries_list.dart';
+import 'package:country_info/widgets/filter_button.dart';
+import 'package:country_info/widgets/seach_bar.dart';
 import 'package:flutter/material.dart';
 
 class Countries extends StatefulWidget {
@@ -49,6 +52,7 @@ class _CountriesState extends State<Countries> {
 
       return matchesSearch && matchesContinent && matchesTimezone;
     }).toList();
+    filteredCountries.sort((a, b) => a.commonName.compareTo(b.commonName));
   }
 
   void _openFilterModal() {
@@ -67,7 +71,7 @@ class _CountriesState extends State<Countries> {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
                 DropdownButton<String>(
-                  isExpanded: true,
+                  isExpanded: false,
                   value: selectedContinent,
                   onChanged: (String? newValue) {
                     setModalState(() {
@@ -94,7 +98,7 @@ class _CountriesState extends State<Countries> {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
                 DropdownButton<String>(
-                  isExpanded: true,
+                  isExpanded: false,
                   value: selectedTimezone,
                   onChanged: (String? newValue) {
                     setModalState(() {
@@ -164,6 +168,7 @@ class _CountriesState extends State<Countries> {
       setState(() {
         allCountries = countries;
         filteredCountries = countries;
+        allCountries.sort((a, b) => a.commonName.compareTo(b.commonName));
       });
     } catch (e) {
       print('Error loading countries: $e');
@@ -203,78 +208,13 @@ class _CountriesState extends State<Countries> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: searchController,
-              onChanged: handleSearch,
-              decoration: InputDecoration(
-                labelText: 'Search by country name...',
-                border: InputBorder.none,
-                prefixIcon: Icon(Icons.search),
-                fillColor: isDarkMode ? Color(0xFF2C2C2C) : Color(0xFFF2F4F7),
-                filled: true,
-              ),
-            ),
-          ),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.public, size: 24),
-                    SizedBox(width: 8),
-                    Text(
-                      'EN',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
-                ),
-                IconButton(
-                  onPressed: _openFilterModal,
-                  icon: Icon(Icons.filter_list, size: 24),
-                  tooltip: 'Filter countries',
-                ),
-              ],
-            ),
-          ),
-          if (selectedContinent != 'All' || selectedTimezone != 'All')
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                children: [
-                  Text('Active filters: ',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  if (selectedContinent != 'All')
-                    Chip(
-                      label: Text(selectedContinent),
-                      onDeleted: () {
-                        setState(() {
-                          selectedContinent = 'All';
-                          _filterCountries();
-                        });
-                      },
-                    ),
-                  SizedBox(width: 8),
-                  if (selectedTimezone != 'All')
-                    Chip(
-                      label: Text(selectedTimezone),
-                      onDeleted: () {
-                        setState(() {
-                          selectedTimezone = 'All';
-                          _filterCountries();
-                        });
-                      },
-                    ),
-                ],
-              ),
-            ),
+          SeachBar(searchValue: handleSearch, themeMode: isDarkMode),
+          FilterButton(filterFcn: _openFilterModal),
+          ActiveFilters(
+              selectedContinent: selectedContinent,
+              selectedTimezone: selectedTimezone,
+              clearContinent: () => setState(() => selectedContinent = 'All'),
+              clearTimezone: () => setState(() => selectedTimezone = 'All')),
           Expanded(
             child: allCountries.isEmpty
                 ? Center(child: CircularProgressIndicator())
